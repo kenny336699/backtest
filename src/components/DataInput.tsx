@@ -95,18 +95,15 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
       support: supportIds,
       additional: additionalIds,
     });
-    // Clear the form after submission
-    setFormData({
-      date: "",
-      time: "",
-      symbol: "",
-      pattern: "",
+
+    // Reset only specific fields
+    setFormData((prev) => ({
+      ...prev,
       support: "",
       additional: "",
       r: 0,
       feeling: "",
-    });
-    setSelectedPatterns([]);
+    }));
     setSelectedSupports([]);
     setSelectedAdditionals([]);
   };
