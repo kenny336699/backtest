@@ -19,9 +19,10 @@ import { BacktestData } from "../types";
 
 interface ResultTableProps {
   data: BacktestData[];
+  onRemoveItem: (id: number) => void;
 }
 
-const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
+const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
   const columns: ColumnDef<BacktestData>[] = React.useMemo(
     () => [
       { accessorKey: "date", header: "Date" },
@@ -32,8 +33,22 @@ const ResultTable: React.FC<ResultTableProps> = ({ data }) => {
       { accessorKey: "additional", header: "Additional" },
       { accessorKey: "r", header: "R" },
       { accessorKey: "feeling", header: "Feeling" },
+      {
+        id: "actions",
+        cell: ({ row }) => (
+          <Button
+            onClick={() => {
+              row.original.id ?? onRemoveItem(row.original.id);
+            }}
+            variant="destructive"
+            size="sm"
+          >
+            Remove
+          </Button>
+        ),
+      },
     ],
-    []
+    [onRemoveItem]
   );
 
   const table = useReactTable({

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BacktestData } from "../types";
+import { BacktestData, BacktestDataInput } from "../types";
 
 interface DataInputProps {
-  onSubmit: (data: BacktestData) => void;
+  onSubmit: (data: BacktestDataInput) => void;
 }
 
 const predefinedSymbols = ["TSLA", "NVDA", "SPOTCRUDE", "APPLE"];
@@ -40,7 +40,7 @@ const additionals = [
 ];
 
 const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState<BacktestData>({
+  const [formData, setFormData] = useState<BacktestDataInput>({
     date: "",
     time: "21:30",
     symbol: "",
@@ -242,6 +242,17 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
             </label>
           ))}
         </div>
+      </div>
+      <div>
+        <Label htmlFor="feeling">Feeling</Label>
+        <Input
+          type="text"
+          id="feeling"
+          name="feeling"
+          value={formData.feeling}
+          onChange={handleChange}
+          placeholder="Enter your feeling about this trade"
+        />
       </div>
 
       <div>
