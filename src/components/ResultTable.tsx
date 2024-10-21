@@ -38,7 +38,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
         cell: ({ row }) => (
           <Button
             onClick={() => {
-              row.original.id ?? onRemoveItem(row.original.id);
+              onRemoveItem(row.original.id);
             }}
             variant="destructive"
             size="sm"

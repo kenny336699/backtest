@@ -14,6 +14,7 @@ const BacktestTool: React.FC = () => {
   };
 
   const handleRemoveItem = (id: number) => {
+    console.log("12312", id);
     setBacktestData((prev) => prev.filter((item) => item.id !== id));
   };
 

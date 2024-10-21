@@ -12,8 +12,9 @@ interface DataInputProps {
 const predefinedSymbols = ["TSLA", "NVDA", "SPOTCRUDE", "APPLE"];
 
 const patterns = [
-  { id: "1", name: "KL PBB" },
   { id: "2", name: "PBB" },
+  { id: "1", name: "KL PBB" },
+
   { id: "3", name: "3C" },
   { id: "4", name: "CWH" },
   { id: "5", name: "CHEAT" },
@@ -37,6 +38,7 @@ const additionals = [
   { id: "1", name: "慣性" },
   { id: "2", name: "洗盤" },
   { id: "3", name: "開市" },
+  { id: "4", name: "R >= 1" },
 ];
 
 const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
@@ -95,7 +97,6 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
       support: supportIds,
       additional: additionalIds,
     });
-
     // Reset only specific fields
     setFormData((prev) => ({
       ...prev,
@@ -255,7 +256,7 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
         />
       </div>
 
-      <div>
+      <div className="w-full max-w-xs">
         <Label htmlFor="r">R</Label>
         <Input
           type="number"
@@ -266,6 +267,7 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
           step="0.1"
           min={-1}
           required
+          className="w-24"
         />
       </div>
 
