@@ -9,12 +9,11 @@ interface DataInputProps {
   onSubmit: (data: BacktestDataInput) => void;
 }
 
-const predefinedSymbols = ["TSLA", "NVDA", "SPOTCRUDE", "APPLE"];
+const predefinedSymbols = ["TSLA", "NVDA","APPLE","SPOTCRUDE", ];
 
 const patterns = [
   { id: "2", name: "PBB" },
   { id: "1", name: "KL PBB" },
-
   { id: "3", name: "3C" },
   { id: "4", name: "CWH" },
   { id: "5", name: "CHEAT" },

@@ -25,7 +25,20 @@ interface ResultTableProps {
 const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
   const columns: ColumnDef<BacktestData>[] = React.useMemo(
     () => [
-      { accessorKey: "date", header: "Date" },
+      {
+        accessorKey: "date",
+        header: "Date",
+        cell: ({ getValue }) => {
+          const date = new Date(getValue() as string);
+          return date
+            .toLocaleDateString("en-CA", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/-/g, "/"); // Replace hyphens with slashes
+        },
+      },
       { accessorKey: "time", header: "Time" },
       { accessorKey: "symbol", header: "Symbol" },
       { accessorKey: "pattern", header: "Pattern" },
