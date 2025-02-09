@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { BacktestData, BacktestDataInput } from "../types";
+import { BacktestDataInput } from "../types";
+import { DateTimeInput } from "./input/DateTimeInput";
+import { CheckboxGroupInput } from "./input/CheckboxGroupInput";
+import { FeelingInput } from "./input/FeelingInput";
+import { NumberInput } from "./input/NumberInput";
+import { SymbolInput } from "./input/SymbolInput";
+
+
 
 interface DataInputProps {
   onSubmit: (data: BacktestDataInput) => void;
 }
 
-const predefinedSymbols = ["TSLA", "NVDA","APPLE","SPOTCRUDE", ];
+const predefinedSymbols = ["TSLA", "NVDA", "APPLE", "SPOTCRUDE"];
 
 const patterns = [
   { id: "2", name: "PBB" },
@@ -50,6 +54,7 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
     additional: "",
     r: 0,
     feeling: "",
+    stopLossValue: 0,
   });
 
   const [selectedPatterns, setSelectedPatterns] = useState<string[]>([]);
@@ -58,9 +63,12 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "r" ? parseFloat(value) : value,
+      [name]: (name === "r" || name === "stopLossValue") 
+        ? (value === "" || value === null ? 0 : parseFloat(value))
+        : value
     }));
   };
 
@@ -110,165 +118,69 @@ const DataInput: React.FC<DataInputProps> = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="date">Date</Label>
-          <Input
-            type="date"
-            id="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="time">Time</Label>
-          <Input
-            type="time"
-            id="time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      </div>
+      <DateTimeInput
+        date={formData.date}
+        time={formData.time}
+        onChange={handleChange}
+      />
 
-      <div>
-        <Label htmlFor="symbol">Symbol</Label>
-        <Input
-          type="text"
-          id="symbol"
-          name="symbol"
-          value={formData.symbol}
-          onChange={handleChange}
-          required
-        />
-        <div className="mt-2 space-x-2">
-          {predefinedSymbols.map((symbol) => (
-            <label key={symbol} className="inline-flex items-center">
-              <Checkbox
-                checked={formData.symbol === symbol}
-                onCheckedChange={() => handleSymbolCheck(symbol)}
-              />
-              <span className="ml-2">{symbol}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <SymbolInput
+        symbol={formData.symbol}
+        onChange={handleChange}
+        onSymbolCheck={handleSymbolCheck}
+        predefinedSymbols={predefinedSymbols}
+      />
 
-      <div>
-        <Label htmlFor="pattern">Pattern</Label>
-        <Input
-          type="text"
-          id="pattern"
-          name="pattern"
-          value={selectedPatterns.join(", ")}
-          readOnly
-          required
-        />
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {patterns.map((pattern) => (
-            <label key={pattern.id} className="inline-flex items-center">
-              <Checkbox
-                checked={selectedPatterns.includes(pattern.id)}
-                onCheckedChange={() =>
-                  handleMultiSelect(
-                    pattern.id,
-                    selectedPatterns,
-                    setSelectedPatterns
-                  )
-                }
-              />
-              <span className="ml-2">{pattern.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <CheckboxGroupInput
+        label="Pattern"
+        name="pattern"
+        options={patterns}
+        selectedValues={selectedPatterns}
+        onChange={(id) => handleMultiSelect(id, selectedPatterns, setSelectedPatterns)}
+        readOnly
+        required
+      />
 
-      <div>
-        <Label htmlFor="support">Support</Label>
-        <Input
-          type="text"
-          id="support"
-          name="support"
-          value={selectedSupports.join(", ")}
-          readOnly
-          required
-        />
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {supports.map((support) => (
-            <label key={support.id} className="inline-flex items-center">
-              <Checkbox
-                checked={selectedSupports.includes(support.id)}
-                onCheckedChange={() =>
-                  handleMultiSelect(
-                    support.id,
-                    selectedSupports,
-                    setSelectedSupports
-                  )
-                }
-              />
-              <span className="ml-2">{support.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <CheckboxGroupInput
+        label="Support"
+        name="support"
+        options={supports}
+        selectedValues={selectedSupports}
+        onChange={(id) => handleMultiSelect(id, selectedSupports, setSelectedSupports)}
+        readOnly
+        required
+      />
 
-      <div>
-        <Label htmlFor="additional">Additional</Label>
-        <Input
-          type="text"
-          id="additional"
-          name="additional"
-          value={selectedAdditionals.join(", ")}
-          readOnly
-        />
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {additionals.map((additional) => (
-            <label key={additional.id} className="inline-flex items-center">
-              <Checkbox
-                checked={selectedAdditionals.includes(additional.id)}
-                onCheckedChange={() =>
-                  handleMultiSelect(
-                    additional.id,
-                    selectedAdditionals,
-                    setSelectedAdditionals
-                  )
-                }
-              />
-              <span className="ml-2">{additional.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-      <div>
-        <Label htmlFor="feeling">Feeling</Label>
-        <Input
-          type="text"
-          id="feeling"
-          name="feeling"
-          value={formData.feeling}
-          onChange={handleChange}
-          placeholder="Enter your feeling about this trade"
-        />
-      </div>
+      <CheckboxGroupInput
+        label="Additional"
+        name="additional"
+        options={additionals}
+        selectedValues={selectedAdditionals}
+        onChange={(id) => handleMultiSelect(id, selectedAdditionals, setSelectedAdditionals)}
+        readOnly
+      />
 
-      <div className="w-full max-w-xs">
-        <Label htmlFor="r">R</Label>
-        <Input
-          type="number"
-          id="r"
-          name="r"
-          value={formData.r}
-          onChange={handleChange}
-          step="0.1"
-          min={-1}
-          required
-          className="w-24"
-        />
-      </div>
+      <FeelingInput value={formData.feeling} onChange={handleChange} />
+
+      <NumberInput
+        label="R"
+        name="r"
+        value={formData.r}
+        onChange={handleChange}
+        step="0.1"
+        min={-1}
+        required
+      />
+
+      <NumberInput
+        label="SL Value"
+        name="stopLossValue"
+        value={formData.stopLossValue}
+        onChange={handleChange}
+        step="0.01"
+        min={-1}
+        required
+      />
 
       <Button type="submit">Add Entry</Button>
     </form>

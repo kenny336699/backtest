@@ -36,7 +36,7 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
               month: "2-digit",
               day: "2-digit",
             })
-            .replace(/-/g, "/"); // Replace hyphens with slashes
+            .replace(/-/g, "/");
         },
       },
       { accessorKey: "time", header: "Time" },
@@ -44,7 +44,22 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
       { accessorKey: "pattern", header: "Pattern" },
       { accessorKey: "support", header: "Support" },
       { accessorKey: "additional", header: "Additional" },
-      { accessorKey: "r", header: "R" },
+      {
+        accessorKey: "stopLossValue",
+        header: "SL Value",
+        cell: ({ getValue }) => {
+          const value = getValue() as number;
+          return value || "N/A";
+        }
+      },
+      {
+        accessorKey: "r",
+        header: "R",
+        cell: ({ getValue }) => {
+          const value = getValue() as number;
+          return value || "N/A";
+        }
+      },
       { accessorKey: "feeling", header: "Feeling" },
       {
         id: "actions",
@@ -71,7 +86,15 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
   });
 
   const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(data);
+    // Format the data for Excel export
+    const exportData = data.map(item => ({
+      ...item,
+      date: new Date(item.date).toLocaleDateString("en-CA").replace(/-/g, "/"),
+      r: item.r || "N/A",
+      slValue: item.stopLossValue || "N/A"
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Backtest Results");
     XLSX.writeFile(wb, "backtest_results.xlsx");
@@ -79,33 +102,35 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
 
   return (
     <div>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       <Button onClick={exportToExcel} className="mt-4">
         Export to Excel
       </Button>
@@ -114,3 +139,4 @@ const ResultTable: React.FC<ResultTableProps> = ({ data, onRemoveItem }) => {
 };
 
 export default ResultTable;
+

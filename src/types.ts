@@ -7,7 +7,7 @@ export interface BacktestData {
   support: string;
   additional: string;
   r: number;
-  feeling: string;
+  feeling: string; stopLossValue: number;
 }
 export interface BacktestDataInput {
   date: string;
@@ -18,4 +18,5 @@ export interface BacktestDataInput {
   additional: string;
   r: number;
   feeling: string;
+  stopLossValue: number;
 }
